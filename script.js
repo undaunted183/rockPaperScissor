@@ -1,73 +1,99 @@
-//these two variable are used to keep track of score after each round of play
-let yourScore = 0;
-let computerScore = 0;
+//2nd try
+
+let yourScore=0;
+let computerScore=0;
+
+const buttons = document.querySelectorAll(".btn"); 
+const start = document.querySelector(".start-btn");
+   console.log(buttons);
+
+//function for computer's selection
+let computerPlay = function(){
+    const result = ['Rock','Paper','Scissor'];
+     let x = Math.floor(Math.random()*3)
+     console.log(x);
+    return result[x];
+}
+
+//helper function for creating html and text
+function divCreater(msg) {
+    const content = document.createElement('div');
+    content.classList.add('result');
+    content.textContent = msg;
+    (document.body).append(content);
+}
+
+// helper function for clearing window
+function clearPage() {
+    let content = document.querySelectorAll(".result"); 
+    content.forEach((element)=>{
+        element.remove();
+    })
+   }
+
+//function for checking the winner
+function checkWinner(){
+    if(yourScore===5){
+        clearPage();
+        divCreater('You won the Game! Congratulations !!');
+        yourScore=0;
+        computerScore=0;
+    }
+    if(computerScore===5){
+        clearPage();
+        divCreater('You lost the Game! You suck !!');
+        yourScore=0;
+        computerScore=0;
+    }
+}
 
 
-// this is the function which plays a single round of game and returns its result in string format and at the same time updates the global score variable
-function playOnce(){ 
 
-    //computer selection
-    let computerPlay = function(){
-        const result = ['Rock','Paper','Scissor'];
-         let x = Math.floor(Math.random()*3)
-         console.log(x);
-        return result[x];
+//function for single round of play
+function playRound(playerSelection, computerSelection){
+    //check if user input is valid or not 
+    //condition for computer winning
+    if((computerSelection==='Rock' && playerSelection==='Scissor') || (computerSelection==='Paper' && playerSelection==='Rock') || (computerSelection==='Scissor' && playerSelection==='Paper')) {
+        computerScore++;
+      
+        divCreater(`You lost this round ! ${computerSelection} beat ${playerSelection} Score  ${yourScore}:${computerScore} `);
     }
     
-    //console.log( computerPlay());
-    let computerSelection = computerPlay();
+    // condition for player winning
+    else if((playerSelection==='Rock' && computerSelection==='Scissor') || (playerSelection==='Paper' && computerSelection==='Rock') || (playerSelection==='Scissor' && computerSelection==='Paper')) {
+        yourScore++;
+       
+        divCreater(`You Won this round ! ${playerSelection} beat ${computerSelection} Score  ${yourScore}:${computerScore}`);
+    }
 
-    //player selection and formating player selection string
-    let playerSelection = window.prompt("what do you choose? Rock, Paper or Scissor!");
-    playerSelection = playerSelection[0].toUpperCase()+ (playerSelection.slice(1)).toLowerCase();
-    
-    console.log(playerSelection);
-    
-    function playRound(playerSelection, computerSelection){
-        //check if user input is valid or not 
-        //condition for computer winning
-        if((computerSelection==='Rock' && playerSelection==='Scissor') || (computerSelection==='Paper' && playerSelection==='Rock') || (computerSelection==='Scissor' && playerSelection==='Paper')) {
-            computerScore++;
-            return(`You loose! ${computerSelection} beat ${playerSelection} :(( `);
-        }
+    //condition for a tie
+    else if (playerSelection === computerSelection){
         
-        // condition for player winning
-        else if((playerSelection==='Rock' && computerSelection==='Scissor') || (playerSelection==='Paper' && computerSelection==='Rock') || (playerSelection==='Scissor' && computerSelection==='Paper')) {
-            yourScore++;
-            return(`You Win! ${playerSelection} beat ${computerSelection} :))`);
-        }
-    
-        //condition for a tie
-        else if (playerSelection === computerSelection){
-            return(`Its a tie! ${computerSelection} tie with ${playerSelection} `);
-        }
-        // Invalid inputs
-        else 
-        return('Invalid selection, try again! Make sur e first character is not a blank space');
+        divCreater(`This round is a tie! ${computerSelection} tie with ${playerSelection}. Score  ${yourScore}:${computerScore} `);
     }
+    // Invalid inputs
+    else 
     
-    return playRound(playerSelection,computerSelection);
+    divCreater('Invalid selection, try again! Make sure first character is not a blank space');
 }
 
-//function for playing 5 round of games, it prints result of each round and final result of 5 rounds
 
-function game(){
-    for(let i=0; i<5; i++){
-        console.log(`Result of Round ${i+1}: ${playOnce()} `);
-    }
-    if (yourScore>computerScore){
-        console.log(`Congratulation you won by score ${yourScore} : ${computerScore}`);
-    }
-    else if (yourScore<computerScore){
-        console.log(`Sorry, you lost by score ${yourScore} : ${computerScore} `);
-    }
-    else {
-        console.log(`Its a tie with the score of ${yourScore} : ${computerScore}`);
-    }
-    
-    //resetting the score variables after game is over
-    yourScore=0;
-    computerScore=0;
-}
+//event handler for playing buttons
+   buttons.forEach((button)=>{
+       button.addEventListener('click', ()=>{
 
-game();
+        let computerSelection = computerPlay();
+        let  playerSelection = button.innerText;
+           console.log(playerSelection);
+           playRound(playerSelection, computerSelection);
+           checkWinner();
+
+       })
+   })
+
+   
+
+   //event handler for starting button,
+   start.addEventListener('click', ()=>{
+    clearPage();
+   })
